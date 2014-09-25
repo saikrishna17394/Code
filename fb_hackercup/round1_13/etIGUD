@@ -1,0 +1,138 @@
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.io.FileInputStream;
+import java.util.StringTokenizer;
+import java.io.InputStream;
+
+/**
+ * Built using CHelper plug-in
+ * Actual solution is at the top
+ */
+public class Main {
+	public static void main(String[] args) {
+		InputStream inputStream;
+		try {
+			inputStream = new FileInputStream("security.in");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		OutputStream outputStream;
+		try {
+			outputStream = new FileOutputStream("security.out");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		InputReader in = new InputReader(inputStream);
+		PrintWriter out = new PrintWriter(outputStream);
+		Security solver = new Security();
+		int testCount = Integer.parseInt(in.next());
+		for (int i = 1; i <= testCount; i++)
+			solver.solve(i, in, out);
+		out.close();
+	}
+}
+
+class Security {
+    public void solve(int testNumber, InputReader in, PrintWriter out) {
+        int m = in.nextInt();
+        String k1 = in.next();
+        String k2 = in.next();
+        out.print("Case #" + testNumber + ": ");
+        if (!match(k1, k2, m)) {
+            out.println("IMPOSSIBLE");
+            return;
+        }
+        for (int i = 0; i < k1.length(); ++i)
+            if (k1.charAt(i) == '?') {
+                for (char ch = 'a'; ch <= 'f'; ++ch) {
+                    String nk1 = k1.substring(0, i) + ch + k1.substring(i + 1);
+                    if (match(nk1, k2, m)) {
+                        k1 = nk1;
+                        break;
+                    }
+                }
+            }
+        if (k1.contains("?")) throw new RuntimeException();
+        out.println(k1);
+    }
+
+    boolean[][] g;
+    int[] match;
+    boolean[] visited;
+    int m;
+
+    private boolean match(String a, String b, int m) {
+        this.m = m;
+        int block = a.length() / m;
+        g = new boolean[m][m];
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < m; ++j)
+                g[i][j] = same(a.substring(i * block, (i + 1) * block), b.substring(j * block, (j + 1) * block));
+        }
+        match = new int[m];
+        Arrays.fill(match, -1);
+        visited = new boolean[m];
+        for (int i = 0; i < m; ++i) {
+            Arrays.fill(visited, false);
+            if (!dfs(i)) return false;
+        }
+        return true;
+    }
+
+    private boolean dfs(int at) {
+        if (visited[at]) return false;
+        visited[at] = true;
+        for (int i = 0; i < m; ++i) {
+            if (g[at][i] && (match[i] < 0)) {
+                match[i] = at;
+                return true;
+            }
+        }
+        for (int i = 0; i < m; ++i) {
+            if (g[at][i] && dfs(match[i])) {
+                match[i] = at;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean same(String a, String b) {
+        if (a.length() != b.length()) throw new RuntimeException();
+        for (int i = 0; i < a.length(); ++i)
+            if (a.charAt(i) != b.charAt(i) && a.charAt(i) != '?' && b.charAt(i) != '?') return false;
+        return true;
+    }
+}
+
+class InputReader {
+    BufferedReader reader;
+    StringTokenizer tokenizer;
+
+    public InputReader(InputStream stream) {
+        reader = new BufferedReader(new InputStreamReader(stream));
+        tokenizer = null;
+    }
+
+    public String next() {
+        while (tokenizer == null || !tokenizer.hasMoreTokens()) {
+            try {
+                tokenizer = new StringTokenizer(reader.readLine());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return tokenizer.nextToken();
+    }
+
+    public int nextInt() {
+        return Integer.parseInt(next());
+    }
+
+    }
+
