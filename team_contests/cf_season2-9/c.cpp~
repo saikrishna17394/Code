@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+#define lli long long int
+using namespace std;
+
+lli n,m,d,k;
+lli A[500],B[500];
+lli ret[500],temp[500];
+
+void power(lli k) {
+	for(int i=1;i<n;i++) {
+		ret[i]=0;
+	}
+	ret[0]=1;
+	
+	while(k>0) {
+		if(k%2==1)
+		{		
+			
+			for(int i=0;i<n;i++)
+				temp[i]=0;
+				
+			for(lli i=0;i<n;i++) {
+				for(lli j=0;j<n;j++) {
+					temp[(j+i)%n]+=ret[i]*A[j];
+					//cout<<j<<" "<<i<<" "<<ret[i]<<"*"<<A[j]<<endl;
+				}
+			}
+			for(int i=0;i<n;i++)
+					ret[i]=temp[i]%m;
+		}
+		
+		fill(temp,temp+n,0);
+		
+		for(lli i=0;i<n;i++)
+			for(lli j=0;j<n;j++) {
+				temp[(i+j)%n]+=A[i]*A[j];
+			}
+		for(int i=0;i<n;i++)
+			A[i]=temp[i]%m;
+		k/=2;
+	}
+}
+
+int main()
+{
+	freopen("cell.in","r",stdin);
+	freopen("cell.out","w",stdout);
+
+	cin>>n>>m>>d>>k;
+	for(int i=0;i<n;i++)
+		cin>>B[i];
+		
+	for(lli i=0;i<n;i++) {
+		if(min(i,n-i)<=d)
+			A[i]=1;
+		else
+			A[i]=0;
+	}
+
+	for(int i=0;i<n;i++)
+		printf("%lld ",A[i]);
+	printf("\n");
+
+	power(k);
+	
+	for(int i=0;i<n;i++)
+		printf("%lld ",ret[i]);
+	printf("\n");
+		
+	for(int i=0;i<n;i++) {
+		lli val=0;
+		for(int j=0;j<n;j++) {
+			val+=ret[(n+j-i)%n]*B[j];
+			//cout<<ret[i][j]<<" ";
+		}
+//		cout<<endl;
+		val%=m;
+		printf("%lld ",val);
+	}
+	printf("\n");	
+	return 0;
+}

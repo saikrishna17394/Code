@@ -1,0 +1,63 @@
+#include <bits/stdc++.h>
+#define inf 999999999
+
+using namespace std;
+
+int x,t,n;
+int vis[3601];
+int A[16];
+vector<int> g[3601];
+int D[3601];
+
+int main() {
+	cin>>x;
+	
+	while(x--) {
+		cin>>n>>t;
+		
+		for(int i=0;i<n;i++)
+			cin>>A[i];
+		
+		for(int i=0;i<3601;i++) {
+			g[i].clear();
+			for(int j=0;j<n;j++) {
+				int val=i+A[j];
+				val=max(val,0);
+				val=min(val,3600);
+				g[i].push_back(val);
+			}
+			D[i]=-1;				
+		}
+		
+		memset(vis,0,sizeof vis);
+		
+		queue<int> q;
+		q.push(0);
+		D[0]=0;
+		vis[0]=1;
+		
+		while(!q.empty()) {
+			int ver=q.front();
+			q.pop();
+			
+			for(int j=0;j<g[ver].size();j++) {
+				int nxt=g[ver][j];
+				if(vis[nxt]==0) {
+					vis[nxt]=1;
+					D[nxt]=D[ver]+1;
+					q.push(nxt);
+				}
+			}
+		}
+		
+		for(int i=t;i<3601;i++) {
+			if(D[i]!=-1) {
+				printf("%d %d\n",D[i],i-t);
+				break;
+			}
+		}
+		
+	}
+	
+	return 0;
+}

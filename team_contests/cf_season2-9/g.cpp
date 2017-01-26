@@ -1,0 +1,39 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int n,m;
+int A[1001],B[2001];
+
+int main() {
+	freopen("graveyard.in","r",stdin);
+	freopen("graveyard.out","w",stdout);
+
+	cin>>n>>m;
+	if(n==m) {
+		printf("0\n");
+		return 0;
+	}
+	
+	for(int i=1;i<n;i++)
+		A[i]=i*(n+m);
+	
+	for(int i=1;i<(n+m);i++)
+		B[i]=i*n;
+	
+	int ans=0;
+	int idx=0;
+	
+	for(int i=1;i<n;i++) {
+		while(B[idx]<A[i])
+			idx++;
+		ans+=min(B[idx]-A[i],A[i]-B[idx-1]);
+	}
+	double val=(double)ans;
+	val/=(double)(n*(n+m));
+	val*=(double)1e4;
+	
+	printf("%.4f\n",val);
+	
+	return 0;
+}

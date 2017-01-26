@@ -1,0 +1,51 @@
+#include <bits/stdc++.h>
+#define ii pair<int,int>
+
+using namespace std;
+
+int A[3];
+
+int main() {
+	while(1) {
+		for(int i=0;i<3;i++)
+			cin>>A[i];
+		sort(A,A+3);
+		if(A[2]==0)
+			break;
+		
+		if(A[0]!=A[1] && A[1]!=A[2])
+			printf("1 1 2\n");		
+		else if(A[0]==13) 
+			printf("*\n");
+		else if(A[0]==A[1] && A[1]==A[2])
+			printf("%d %d %d\n",A[0]+1,A[1]+1,A[2]+1);
+		else if(A[0]==A[1]) {
+			if(A[2]<13)
+				A[2]++;
+			else {
+				A[0]++;
+				A[1]++;
+				A[2]=1;
+				sort(A,A+3);
+			}
+			printf("%d %d %d\n",A[0],A[1],A[2]);
+		}
+		else {
+			if((A[0]+1)<A[1])
+				A[0]++;
+			else {
+				if(A[1]<13)
+					A[0]+=2;
+				else {
+					A[0]=1;
+					A[1]=1;
+					A[2]=1;
+				}
+			}
+			sort(A,A+3);
+			printf("%d %d %d\n",A[0],A[1],A[2]);			
+		}		
+	}
+
+	return 0;
+}

@@ -1,0 +1,7 @@
+1) Compile the program
+
+g++ prob1.cpp
+
+2) Running a sample test case
+
+./a.out < TESTCASE1_INPUT > out

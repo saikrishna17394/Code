@@ -1,0 +1,73 @@
+#include <bits/stdc++.h>
+#define ii pair<int,int>
+#define lli long long int
+#define lim 100001
+
+using namespace std;
+
+lli b,p,l,n;
+lli A[lim];
+lli tree[lim];
+
+
+lli power(lli n,lli k,lli mod) {
+	lli ret=1%mod;
+	n%=mod;
+	while(k>0) {
+		if(k%2==1)
+			ret=(ret*n)%mod;
+		n=(n*n)%mod;
+		k/=2;
+	}
+	return ret;
+}
+
+void upd(int idx,lli val) {
+	lli inv=power(A[idx],p-2,p);
+	
+	while(idx<=l) {
+		tree[idx]=(tree[idx]*val)%p;
+		tree[idx]=(tree[idx]*inv)%p;
+		idx+=idx&-idx;
+	}
+}
+
+lli read(int idx) {
+	lli ret=1%p;
+	while(idx>0) {
+		ret=(ret*tree[idx])%p;
+		idx-=idx&-idx;
+	}
+	return ret;
+}
+
+int main() {
+	cin.sync_with_stdio(false);
+	
+	while(1) {
+		cin>>b>>p>>l>>n;
+		if(b==0)
+			break;
+		
+		for(int i=1;i<=(int)n;i++) {
+			A[i]=0;
+			tree[i]=0;
+		}
+		tree[0]=1;
+		
+		char c;
+		lli x,y;
+		while(n--) {
+			cin>>c>>x>>y;
+			if(x=='E') {
+				upd((int)x,y);
+			}
+			else {
+				lli ans=read((int)
+			}
+		}
+	
+	}	
+
+	return 0;
+}

@@ -1,0 +1,57 @@
+#include <bits/stdc++.h>
+#define inf 999999999
+#define ii pair<int,int>
+using namespace std;
+
+int t,n,x,y,z;
+ii A[100001];
+int tree[100001];
+
+void upd(int idx,int val) {
+	while(idx<=n) {
+		tree[idx]=min(tree[idx],val);
+		idx+=idx&-idx;
+	}
+}
+
+int read(int idx) {
+	int ret=inf;
+	while(idx>0) {
+		ret=min(ret,tree[idx]);
+		idx-=idx&-idx;
+	}
+	return ret;
+}
+
+int main() {
+	cin>>t;
+	
+	while(t--) {
+		//int ans=0;
+		
+		cin>>n;
+		for(int i=0;i<n;i++) {
+			scanf("%d %d %d",&x,&y,&z);
+			A[x]=ii(y,z);
+			tree[i]=inf;
+		}
+		tree[n]=inf;
+	
+		int ans=1;
+		
+		upd(A[1].first,A[1].second);
+		
+		for(int i=2;i<=n;i++) {
+			int val=read(A[i].first);
+			if(val>A[i].second)
+				ans++;
+			cout<<i<<" "<<A[i].first<<" "<<A[i].second<<" : "<<val<<endl;
+			upd(A[i].first,A[i].second);
+		}
+		printf("%d\n",ans);
+		
+	}
+
+
+	return 0;
+}

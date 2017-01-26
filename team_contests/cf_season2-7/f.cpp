@@ -1,0 +1,106 @@
+#include <bits/stdc++.h>
+#define lli long long int
+#define ii pair<int,int>
+
+using namespace std;
+
+int n,k,d[1000000];
+int A[1000000];
+int C[1000000];
+
+int main() {
+	scanf("%d %d",&n,&k);
+	
+	for(int i=0;i<n;i++)
+		scanf("%d",&d[i]);
+	sort(d,d+n);
+	
+	for(int i=0;i<k;i++)
+		scanf("%d",&A[i]);
+	sort(A,A+k);
+	
+	if(k<n) {
+		printf("NIE\n");
+		return 0;
+	}
+	
+	int l=n,r=k;
+	
+	while(l<=r) {
+		int m=(l+r)/2;
+		
+		set<ii> s;
+		int idx=0;
+		//cout<<l<<" "<<r<<" :"<<m<<endl;
+		for(int i=0;i<m;i++) {
+			C[idx++]=A[k-i-1];
+			//s.insert(ii(A[k-i-1],k-i-1));
+			//cout<<k-i-1<<" "<<A[k-i-1]<<endl;
+		}
+
+		if(C[idx-1]<3*d[n-1]) {
+			if(l==r) 
+				printf("NIE\n");
+			else
+				l=m+1;
+			continue;
+		}
+		int idx2=lower_bound(C,C+idx,2*d[n-1])-C;
+		int idx3=lower_bound(C,C+idx,3*d[n-1])-C;
+		
+		bool ok=true;
+		idx--;
+		
+		for(int i=n-1;i>=0;i--) {
+			
+			if(idx<0) {
+				ok=false;
+				break;
+			}
+			
+			ii val=*s.rbegin();
+			//cout<<val.first<<" df\n";
+			if(C[idx]>=5*d[i]) {
+				C[idx]=-1;
+				while(idx>=0 && C[idx]==-1)
+					idx--;
+				continue;
+			}
+			
+			it=s.lower_bound(ii(3*d[i],0));
+			
+			if(it==s.end()) {
+				//cout<<"ille\n";
+				ok=false;
+				break;
+			}
+			s.erase(it);
+			
+			//cout<<i<<" del1: "<<it->first<<endl;
+			it=s.lower_bound(ii(2*d[i],0));
+			
+			if(it==s.end()) {
+				ok=false;
+				break;
+			}
+			//cout<<i<<" del2: "<<it->first<<endl;
+			s.erase(it);
+		}
+		
+		if(l==r) {
+			if(ok)
+				printf("%d\n",l);
+			else
+				printf("NIE\n");
+			break;
+		}
+		
+		if(ok)
+			r=m;
+		else
+			l=m+1;
+			
+	}
+
+	return 0;
+}

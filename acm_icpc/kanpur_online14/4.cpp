@@ -1,0 +1,141 @@
+#include <bits/stdc++.h>
+#define lli long long int
+#define inf 1999999999
+using namespace std;
+
+struct node {
+	int a,b;
+	lli sum;
+	int inc,dec,ma;
+};
+
+node tree[400000];
+int A[100000];
+
+void build(int idx,int l,int r) {
+	tree[idx].a=A[l];
+	tree[idx].b=A[r];
+
+	if(l==r) {
+		tree[idx].sum=(lli)A[l];
+		tree[idx].inc=1;
+		tree[idx].dec=1;
+		tree[idx].ma=A[l];
+		return;
+	}
+	int m=(l+r)/2;
+	
+	build(2*idx,l,m);
+	build(2*idx+1,m+1,r);
+	
+	tree[idx].sum=tree[2*idx].sum+tree[2*idx+1].sum;
+	tree[idx].inc=0;
+	tree[idx].dec=0;
+	
+	if(tree[2*idx].inc==1 && tree[2*idx+1].inc==1 && tree[2*idx].b<=tree[2*idx+1].a)
+		tree[idx].inc=1;
+	
+	if(tree[2*idx].dec==1 && tree[2*idx+1].dec==1 && tree[2*idx].b>=tree[2*idx+1].a)
+		tree[idx].dec=1;
+	tree[idx].ma=max(tree[2*idx].ma,tree[2*idx+1].ma);
+}
+
+node query(int idx,int l,int r,int i,int j) {
+	//cout<<l<<" "<<r<< " "<<i<<" "<<j<<endl;
+	node ret;
+	ret.inc=1;ret.dec=1;
+	ret.sum=0;
+	ret.a=-1;ret.b=-1;
+	ret.ma=inf;
+	
+	if(i>j)
+		return ret;
+	
+	if(l==i && r==j)
+		return tree[idx];
+	
+	int m=(l+r)/2;
+	
+	node n1=query(2*idx,l,m,i,min(j,m));
+	node n2=query(2*idx+1,m+1,r,max(i,m+1),j);
+	
+	if(n1.a==-1) {
+		return n2;
+	}
+	else if(n2.a==-1) {
+		return n1;
+	}
+	else
+		;
+
+	ret.a=n1.a;
+	ret.b=n2.b;
+	ret.sum=n1.sum+n2.sum;
+	ret.inc=(n1.inc&n2.inc)&(n1.b<=n2.a);
+	ret.dec=(n1.dec&n2.dec)&(n1.b>=n2.a);	
+	ret.ma=max(n1.ma,n2.ma);
+	return ret;
+}
+
+void upd(int idx,int l,int r, int x,int val) {
+	if(l==r) {
+		tree[idx].sum=(lli)val;
+		tree[idx].a=val;
+		tree[idx].b=val;
+		tree[idx].ma=val;
+		return ;
+	}
+	
+	int m=(l+r)/2;
+	
+	if(x<=m) {
+		upd(2*idx,l,m,x,val);
+		tree[idx].a=tree[2*idx].a;
+	}
+	else {
+		upd(2*idx+1,m+1,r,x,val);
+		tree[idx].b=tree[2*idx+1].b;
+	}	
+	
+	node n1=tree[2*idx],n2=tree[2*idx+1];
+	
+	tree[idx].inc=(n1.inc&n2.inc)&(n1.b<=n2.a);
+	tree[idx].dec=(n1.dec&n2.dec)&(n1.b>=n2.a);	
+	tree[idx].sum=tree[2*idx].sum+tree[2*idx+1].sum;
+	tree[idx].ma=max(tree[2*idx].ma,tree[2*idx+1].ma);
+}
+
+int n,m,x,y;
+char c;
+
+int main() {
+	cin>>n>>m;
+	
+	for(int i=0;i<n;i++)
+		scanf("%d",&A[i]);
+	build(1,0,n-1);
+	//printf("what\n");
+	while(m--) {
+		//cin>>c;
+		scanf(" %c %d %d",&c,&x,&y);
+		
+		x--;
+		if(c=='U')
+			upd(1,0,n-1,x,y);
+		else {
+			y--;
+			//cout<<c<<" "<<x<<" "<<y<<endl;
+			node ret=query(1,0,n-1,x,y);
+			if(c=='M')
+				printf("%d\n",ret.ma);
+			else if(c=='S')
+				printf("%lld\n",ret.sum);
+			else if(c=='I')
+				printf("%d\n",ret.inc);
+			else
+				printf("%d\n",ret.dec);
+		}		
+	}
+	
+	return 0;
+}

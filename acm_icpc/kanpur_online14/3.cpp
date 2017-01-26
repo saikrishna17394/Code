@@ -1,0 +1,47 @@
+#include <bits/stdc++.h>
+#define lli long long int
+using namespace std;
+
+string s;
+int t,p,q;
+lli n;
+
+lli A[26];
+
+int main() {
+	cin>>t;
+	
+	while(t--) {
+		cin>>s;
+		cin>>p>>q;
+		memset(A,0,sizeof A);
+		
+		
+		lli val=0;
+		for(int i=0;i<s.length();i++) {
+			A[s[i]-'a']+=p;
+			val+=p;
+		}
+		
+		while(q--) {
+			cin>>n;
+			if(n>val) {
+				printf("-1\n");
+				continue;
+			}
+			
+			for(int i=0;i<26;i++) {
+				//cout<<n<<" "<<i<<" "<<A[i]<<endl;
+				if(A[i]>=n) {
+					printf("%c\n",'a'+i);
+					break;
+				}
+				n-=A[i];
+			}
+		}
+
+	}
+	
+
+	return 0;
+}

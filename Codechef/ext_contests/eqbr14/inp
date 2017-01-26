@@ -1,0 +1,4 @@
+int t;   //variable t
+t->a = 0;    // -> denotes the pointer
+t->c = 5;
+return 0;  // -> is not used

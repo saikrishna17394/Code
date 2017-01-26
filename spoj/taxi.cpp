@@ -1,3 +1,8 @@
+// Solved using ford-fulkerson algorithm of augmenting paths
+// Found the augmenting path by basic DFS.
+// The prolbem also could have been solved by 
+// maximum bipartite matching algorithm (which is more simple).
+
 #include <iostream>
 #include <cstdio>
 #include <cmath>
@@ -8,7 +13,6 @@
 #include <vector>
 #include <map>
 #include <list>
-#include <queue>
 #define lli long long int
 #define ii pair<long long int,long long int>
 
@@ -26,9 +30,8 @@ inline void inp(lli &n ) {//fast input function
 	n=n*sign;
 }
 lli k,t,p,c,s,ans;
-bool g[602][602],vis[602];
-int par[602];
-queue<int> q;
+bool g[702][702],vis[702];
+int par[702];
 
 ii P[401],T[201];
 
@@ -42,24 +45,24 @@ bool check (int i,int j) {
 	return false;
 }
 
-// bool dfs(int i) {
-// 	vis[i]=1;
+bool dfs(int i) {
+	vis[i]=1;
 
-// 	if(g[i][t+p+1]) {
-// 		par[t+p+1]=i;
-// 		return true;
-// 	}
+	if(g[i][t+p+1]) {
+		par[t+p+1]=i;
+		return true;
+	}
 
-// 	for(int j=1;j<=(t+p);j++) {
-// 		if(g[i][j]) {
-// 			par[j]=i;
-// 			if(dfs(j))
-// 				return true;
-// 		}
-// 	}
+	for(int j=1;j<=(t+p);j++) {
+		if(g[i][j]==1 && vis[g[i][j]]==0) {
+			par[g[i][j]]=i;
+			if(dfs(g[i][j]))
+				return true;
+		}
+	}
 
-// 	return false;
-// }
+	return false;
+}
 
 int main() {
 
@@ -99,45 +102,18 @@ int main() {
 		ans=0;
 
 
+		memset(vis,0,sizeof vis);
 
-		while(1) {
-
-			while(!q.empty())
-				q.pop();
-
-			memset(vis,0,sizeof vis);
-			q.push(0);
-			vis[0]=1;
-			int ver;
-
-			while(!q.empty()) {
-				ver=q.front();
-				q.pop();
-
-				if(g[ver][t+p+1]) {
-					par[t+p+1]=ver;
-					ver=t+p+1;
-					break;
-				}
-
-				for(int j=1;j<=(t+p);j++) {
-					if(g[ver][j] && vis[j]==0) {
-						par[j]=ver;
-						q.push(j);
-						vis[ver]=1;
-					}
-				}
-
-			}
-			if(ver!=t+p+1)
-				break;
-			while(ver) {
+		while(dfs(0)) {
+			int ver=t+p+1;
+			while(ver>0) {
 				g[par[ver]][ver]=0;
 				g[ver][par[ver]]=1;
 				ver=par[ver];
 			}
 
 			ans++;
+			memset(vis,0,sizeof vis);
 		}
 
 		printf("%lld\n", ans);
@@ -146,3 +122,5 @@ int main() {
 
 	return 0;
 }
+
+

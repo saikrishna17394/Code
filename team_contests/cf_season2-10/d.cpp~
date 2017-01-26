@@ -1,0 +1,138 @@
+#include <bits/stdc++.h>
+#define mod 1000000007
+#define lli long long int
+
+using namespace std;
+
+int n,dp[1000][1000],dp1[1000][1000],q,cnt[1000][1000],cnt1[1000][1000];
+string A[1000];
+int r1,c1,r2,c2;
+
+int main() {
+	cin>>n;
+	
+	for(int i=0;i<n;i++)
+		cin>>A[i];		
+
+	
+	dp[0][0]=1;	
+	cnt[0][0]=1;
+	if(A[0][0]=='C') {
+		dp[0][0]=1;
+	}
+	
+	for(int j=1;j<n;j++) {
+		dp[0][j]=dp[0][j-1];
+		dp[j][0]=dp[j-1][0];
+		cnt[0][j]=1;
+		cnt[j][0]=1;
+		if(A[0][j]=='C')
+			dp[0][j]++;
+		if(A[j][0]=='C')
+			dp[j][0]++;
+	}
+	
+	for(int i=1;i<n;i++) {
+		for(int j=1;j<n;j++) {
+			if(dp[i-1][j]>dp[i][j-1])
+				cnt[i][j]=cnt[i-1][j];
+			else if(dp[i-1][j]<dp[i][j-1])
+				cnt[i][j]=cnt[i][j-1];
+			else
+				cnt[i][j]=(cnt[i][j-1]+cnt[i-1][j])%mod;
+				
+			dp[i][j]=max(dp[i-1][j],dp[i][j-1]);
+			if(A[i][j]=='C')
+				dp[i][j]++;
+		}
+	}
+	
+
+	dp1[n-1][n-1]=0;
+	cnt1[n-1][n-1]=1;
+	if(A[n-1][n-1]=='C')
+		dp1[n-1][n-1]++;
+		
+	for(int j=n-2;j>=0;j--) {
+		dp1[n-1][j]=dp1[n-1][j+1];
+		dp1[j][n-1]=dp1[j+1][n-1];
+		cnt1[j][n-1]=1;
+		cnt1[n-1][j]=1;
+		
+		if(A[n-1][j]=='C')
+			dp1[n-1][j]++;
+		if(A[j][n-1]=='C')
+			dp1[j][n-1]++;
+	}
+	
+	for(int i=n-2;i>=0;i--) {
+		for(int j=n-2;j>=0;j--) {
+			if(dp1[i+1][j]>dp1[i][j+1])
+				cnt1[i][j]=cnt1[i+1][j];
+			else if(dp1[i+1][j]<dp1[i][j+1])
+				cnt1[i][j]=cnt1[i][j+1];
+			else
+				cnt1[i][j]=(cnt1[i][j+1]+cnt1[i+1][j])%mod;
+			dp1[i][j]=max(dp1[i][j+1],dp1[i+1][j]);
+			if(A[i][j]=='C')
+				dp1[i][j]++;	
+		}
+	}
+	
+	cin>>q;
+	while(q--) {
+		cin>>r1>>c1>>r2>>c2;
+		
+//		if(r1==0 && c1==0) {
+//			cout<<"0 0\n";
+//			continue;
+//		}
+		int ans=0,ans1=0;
+
+		if(r2!=(n-1))	{
+			for(int j=0;j<c1;j++) {
+				int val=dp[r2][j]+dp1[r2+1][j];
+					
+				if(val>ans) {
+					ans=val;
+					lli num=(lli)cnt[r2][j]*(lli)cnt1[r2+1][j];
+					num%=mod;
+					ans1=(int)num;
+				}
+				else if(val==ans) {
+					lli num=(lli)cnt[r2][j]*(lli)cnt1[r2+1][j];
+					num%=mod;
+					ans1+=(int)num;
+					ans1%=mod;
+				}
+				else
+					;						
+			}
+		}
+		
+		if(c2!=(n-1)) {
+			for(int i=0;i<r1;i++) {
+				int val=dp[i][c2]+dp1[i][c2+1];
+					
+				if(val>ans) {
+					ans=val;
+					lli num=(lli)cnt[i][c2]*(lli)cnt1[i][c2+1];
+					num%=mod;
+					ans1=(int)num;
+				}
+				else if(val==ans) {
+					lli num=(lli)cnt[i][c2]*(lli)cnt1[i][c2+1];
+					num%=mod;
+					ans1+=(int)num;
+					ans1%=mod;
+				}
+				else
+					;						
+			}			
+		}		
+		
+		cout<<ans<<" "<<ans1<<endl;
+	}
+
+	return 0;
+}

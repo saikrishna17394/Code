@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+#define ii pair<int,int>
+
+using namespace std;
+
+int l[100001],r[100001],s,b;
+
+int main() {
+	cin.sync_with_stdio(false);
+	
+	while(1) {
+		cin>>s>>b;
+		if(s==0 && b==0)
+			break;
+		
+		
+		
+		for(int i=2;i<s;i++) {
+			l[i]=i-1;
+			r[i]=i+1;
+		}
+		l[1]=-1;
+		r[s]=-1;
+		if(s>1) {
+			r[1]=2;
+			l[s]=s-1;
+		}
+		else {
+			r[1]=-1;
+			l[1]=-1;
+		}
+						
+		int x,y;
+		while(b--) {
+			cin>>x>>y;
+			
+			int a=l[x];
+			if(a!=-1) {
+				r[a]=r[y];
+				printf("%d ",a);
+			}
+			else
+				printf("* ");
+			
+			a=r[y];
+			if(a!=-1) {
+				l[a]=l[x];
+				printf("%d\n",a);
+			}
+			else
+				printf("*\n");				
+			
+		}
+		printf("-\n");
+	}
+	
+
+	return 0;
+}

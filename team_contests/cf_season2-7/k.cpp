@@ -1,0 +1,107 @@
+#include <bits/stdc++.h>
+#define lli long long int
+#define ii pair<long long int,long long int>
+
+using namespace std;
+
+lli n,A[100000][3];
+
+vector<lli> cross(vector<lli> a,vector<lli> b) {
+	vector<lli> ret(3);
+	ret[0]=a[1]*b[2]-a[2]*b[1];
+	ret[1]=a[2]*b[0]-a[0]*b[2];
+	ret[2]=a[0]*b[1]-a[1]*b[0];
+	return ret;
+}
+
+lli gcd(lli a,lli b) {
+	if(b==0)
+		return a;
+	return gcd(b,a%b);
+}
+
+int main() {
+	cin>>n;
+	
+	for(int i=0;i<n;i++)
+		for(int j=0;j<3;j++)
+			scanf("%lld",&A[i][j]);
+	
+	if(n<=3) {
+		printf("TAK\n");
+		return 0;
+	}
+	
+	vector<lli> a(3),b(3);
+	
+	for(int i=0;i<3;i++) {
+		a[i]=A[1][i]-A[0][i];
+		b[i]=A[2][i]-A[0][i];
+	}
+	
+	vector<lli> c=cross(a,b);
+	
+	bool ok=true;
+	
+	for(int j=0;j<3;j++) {
+		if(c[j]!=0)
+			ok=false;
+	}
+	
+	for(int i=3;i<n;i++) {
+		vector<lli> d(3);
+		
+		for(int j=0;j<3;j++)
+			d[j]=A[i][j]-A[0][j];
+		
+		vector<lli> v;
+		v=cross(a,d);
+
+		if(ok) {
+			c=v;
+			for(int j=0;j<3;j++)
+				if(c[j]!=0)
+					ok=false;
+			continue;
+		}
+		
+		if(v[0]==0 && v[1]==0 && v[2]==0)
+			continue;
+		
+
+		int val=0,val1=0;
+		for(int i=0;i<3;i++) {			
+			if((v[i]==0 && c[i]!=0) || (v[i]!=0 && c[i]==0)) {
+				printf("NIE\n");
+				return 0;
+			}
+		}
+		
+		set<ii> s;
+		
+		for(int i=0;i<3;i++) {
+			lli x,y;
+			if(v[i]==0)
+				continue;
+			x=v[i],y=c[i];
+			lli g=gcd(abs(x),abs(y));
+			
+			lli sgn=x/abs(x);
+			sgn*=y/abs(y);
+			
+			x=abs(x)/g;
+			y=abs(y)/g;
+			x*=sgn;
+			
+			s.insert(ii(x,y));
+		}
+		
+		if((int)s.size()!=1) {
+			printf("NIE\n");
+			return 0;
+		}
+	}	
+	printf("TAK\n");
+
+	return 0;
+}
